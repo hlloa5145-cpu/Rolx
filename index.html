@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROLEX | نظام الاستثمار</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
+        body { font-family: 'Tajawal', sans-serif; background: #0f172a; color: white; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6">
+    <div id="app" class="w-full max-w-md glass p-10 rounded-[2.5rem] shadow-2xl">
+        </div>
+
+    <script>
+        const SUPABASE_URL = "https://rsmrgiyecaoicrqxgize.supabase.co";
+        const SUPABASE_KEY = "EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbXJnaXllY2FvaWNycXhnaXplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4OTEzODgsImV4cCI6MjA5MDQ2NzM4OH0.9YafUeTgpnqWNsjokIwzHmM-nEkDH81271t2rdk_2UQ";
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        const app = document.getElementById('app');
+
+        // دالة عرض صفحة الدخول
+        function showLogin() {
+            app.innerHTML = `
+                <div class="text-center mb-10">
+                    <h1 class="text-5xl font-black text-blue-500 italic uppercase">Rolex</h1>
+                    <p class="text-gray-400 mt-2 font-bold">تسجيل الدخول</p>
+                </div>
+                <div class="space-y-4">
+                    <input type="email" id="email" placeholder="البريد الإلكتروني" class="w-full p-4 rounded-2xl bg-slate-800 outline-none focus:border-blue-500 border border-transparent transition-all">
+                    <input type="password" id="pass" placeholder="كلمة المرور" class="w-full p-4 rounded-2xl bg-slate-800 outline-none focus:border-blue-500 border border-transparent transition-all">
+                    <button onclick="login()" id="btn" class="w-full bg-blue-600 p-4 rounded-2xl font-black text-lg">دخول 🚀</button>
+                    <button onclick="showRegister()" class="w-full text-sm text-gray-500 underline mt-4">إنشاء حساب جديد</button>
+                </div>
+            `;
+        }
+
+        // دالة الدخول
+        async function login() {
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('pass').value;
+            const { data, error } = await _supabase.from('user_profiles').select('*').eq('email', email).eq('password', pass).single();
+            if (data) {
+                alert('أهلاً بك: ' + data.username);
+                // هنا نفتح صفحة المحفظة
+            } else {
+                alert('خطأ في البيانات!');
+            }
+        }
+
+        // ابدأ بصفحة الدخول
+        showLogin();
+    </script>
+</body>
+</html>
