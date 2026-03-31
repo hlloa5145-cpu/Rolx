@@ -3,56 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ROLEX | نظام الاستثمار</title>
+    <title>ROLEX | نظام الاستثمار المتكامل</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
-        body { font-family: 'Tajawal', sans-serif; background: #0f172a; color: white; }
-        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        body { font-family: 'Tajawal', sans-serif; background: #070b14; color: white; }
+        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05); }
+        .gold-card { background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c); color: #1a1a1a; }
+        .nav-item { transition: 0.3s; cursor: pointer; }
+        .nav-item:hover { color: #3b82f6; transform: translateY(-2px); }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-6">
-    <div id="app" class="w-full max-w-md glass p-10 rounded-[2.5rem] shadow-2xl">
+<body class="min-h-screen flex flex-col">
+
+    <main id="app" class="flex-grow flex items-center justify-center p-4">
+        </main>
+
+    <nav id="bottomNav" class="hidden fixed bottom-0 w-full glass border-t border-white/5 p-4 flex justify-around items-center z-50">
+        <div onclick="showDashboard()" class="nav-item text-center">
+            <span class="block text-xl">🏠</span>
+            <span class="text-[10px] font-bold">الرئيسية</span>
         </div>
+        <div onclick="showDeposit()" class="nav-item text-center">
+            <span class="block text-xl">💰</span>
+            <span class="text-[10px] font-bold">إيداع</span>
+        </div>
+        <div onclick="showWithdraw()" class="nav-item text-center">
+            <span class="block text-xl">💳</span>
+            <span class="text-[10px] font-bold">سحب</span>
+        </div>
+        <div onclick="showProfile()" class="nav-item text-center">
+            <span class="block text-xl">👤</span>
+            <span class="text-[10px] font-bold">حسابي</span>
+        </div>
+    </nav>
 
     <script>
+        // إعدادات Supabase (تأكد من مطابقتها لمشروعك الجديد)
         const SUPABASE_URL = "https://rsmrgiyecaoicrqxgize.supabase.co";
         const SUPABASE_KEY = "EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbXJnaXllY2FvaWNycXhnaXplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4OTEzODgsImV4cCI6MjA5MDQ2NzM4OH0.9YafUeTgpnqWNsjokIwzHmM-nEkDH81271t2rdk_2UQ";
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        const app = document.getElementById('app');
+        let user = null;
 
-        // دالة عرض صفحة الدخول
+        // --- 1. صفحة الدخول ---
         function showLogin() {
-            app.innerHTML = `
-                <div class="text-center mb-10">
-                    <h1 class="text-5xl font-black text-blue-500 italic uppercase">Rolex</h1>
-                    <p class="text-gray-400 mt-2 font-bold">تسجيل الدخول</p>
-                </div>
-                <div class="space-y-4">
-                    <input type="email" id="email" placeholder="البريد الإلكتروني" class="w-full p-4 rounded-2xl bg-slate-800 outline-none focus:border-blue-500 border border-transparent transition-all">
-                    <input type="password" id="pass" placeholder="كلمة المرور" class="w-full p-4 rounded-2xl bg-slate-800 outline-none focus:border-blue-500 border border-transparent transition-all">
-                    <button onclick="login()" id="btn" class="w-full bg-blue-600 p-4 rounded-2xl font-black text-lg">دخول 🚀</button>
-                    <button onclick="showRegister()" class="w-full text-sm text-gray-500 underline mt-4">إنشاء حساب جديد</button>
+            document.getElementById('bottomNav').classList.add('hidden');
+            document.getElementById('app').innerHTML = `
+                <div class="w-full max-w-md glass p-10 rounded-[2.5rem] shadow-2xl animate-fade-in text-center">
+                    <h1 class="text-5xl font-black text-blue-500 italic mb-10 tracking-tighter">ROLEX</h1>
+                    <div class="space-y-4">
+                        <input type="email" id="email" placeholder="البريد الإلكتروني" class="w-full p-4 rounded-2xl bg-slate-900/50 border border-white/5 outline-none focus:border-blue-500 transition-all font-bold text-center">
+                        <input type="password" id="pass" placeholder="كلمة المرور" class="w-full p-4 rounded-2xl bg-slate-900/50 border border-white/5 outline-none focus:border-blue-500 transition-all font-bold text-center">
+                        <button onclick="handleLogin()" id="loginBtn" class="w-full bg-blue-600 p-4 rounded-2xl font-black text-lg shadow-lg hover:bg-blue-500 active:scale-95 transition-all">دخول 🚀</button>
+                    </div>
                 </div>
             `;
         }
 
-        // دالة الدخول
-        async function login() {
-            const email = document.getElementById('email').value;
-            const pass = document.getElementById('pass').value;
-            const { data, error } = await _supabase.from('user_profiles').select('*').eq('email', email).eq('password', pass).single();
-            if (data) {
-                alert('أهلاً بك: ' + data.username);
-                // هنا نفتح صفحة المحفظة
+        // --- 2. الصفحة الرئيسية (المحفظة) ---
+        function showDashboard() {
+            document.getElementById('bottomNav').classList.remove('hidden');
+            document.getElementById('app').innerHTML = `
+                <div class="w-full max-w-md space-y-6 pb-24 self-start mt-10">
+                    <div class="gold-card p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden">
+                        <p class="font-black opacity-70">إجمالي الرصيد</p>
+                        <h2 class="text-5xl font-black mt-2 tabular-nums">$${user.balance}</h2>
+                        <div class="absolute -right-6 -bottom-6 opacity-10 text-8xl font-black">RX</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="glass p-6 rounded-3xl text-center">
+                            <p class="text-xs text-gray-400 font-bold mb-1">الأرباح اليومية</p>
+                            <p class="text-xl font-black text-green-400">+$12.50</p>
+                        </div>
+                        <div class="glass p-6 rounded-3xl text-center">
+                            <p class="text-xs text-gray-400 font-bold mb-1">رأس المال</p>
+                            <p class="text-xl font-black text-blue-400">$${user.balance}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- 3. صفحة الإيداع ---
+        function showDeposit() {
+            document.getElementById('app').innerHTML = `
+                <div class="w-full max-w-md glass p-8 rounded-[2.5rem] self-start mt-10">
+                    <h2 class="text-2xl font-black mb-6">شحن الحساب 📥</h2>
+                    <div class="bg-blue-600/10 border border-blue-500/20 p-4 rounded-2xl mb-6 text-sm text-blue-300">
+                        قم بتحويل المبلغ إلى العنوان التالي وارفقه في التذكرة.
+                    </div>
+                    <div class="space-y-4">
+                        <label class="block text-xs font-bold text-gray-500 mr-2">عنوان USDT (TRC20)</label>
+                        <div class="bg-slate-900 p-4 rounded-xl flex justify-between items-center border border-white/5">
+                            <code class="text-xs break-all">TY6hJ8...v9WxZq2</code>
+                            <button onclick="alert('تم النسخ')" class="text-blue-500 text-xs font-black">نسخ</button>
+                        </div>
+                        <input type="number" placeholder="المبلغ المراد شحنه" class="w-full p-4 rounded-xl bg-slate-900 border-none outline-none font-bold">
+                        <button class="w-full bg-blue-600 p-4 rounded-xl font-black">تأكيد الطلب ✅</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- 4. صفحة السحب ---
+        function showWithdraw() {
+            document.getElementById('app').innerHTML = `
+                <div class="w-full max-w-md glass p-8 rounded-[2.5rem] self-start mt-10">
+                    <h2 class="text-2xl font-black mb-6">سحب الأرباح 📤</h2>
+                    <div class="space-y-4">
+                        <div class="bg-slate-900/50 p-4 rounded-2xl">
+                            <p class="text-xs text-gray-400">الرصيد المتاح للسحب</p>
+                            <p class="text-2xl font-black text-yellow-500">$${user.balance}</p>
+                        </div>
+                        <input type="text" placeholder="عنوان محفظتك" class="w-full p-4 rounded-xl bg-slate-900 border-none outline-none font-bold text-sm">
+                        <input type="number" placeholder="المبلغ المراد سحبه" class="w-full p-4 rounded-xl bg-slate-900 border-none outline-none font-bold text-sm">
+                        <button class="w-full bg-yellow-600 p-4 rounded-xl font-black">تقديم طلب سحب 💳</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- 5. صفحة الملف الشخصي ---
+        function showProfile() {
+            document.getElementById('app').innerHTML = `
+                <div class="w-full max-w-md space-y-4 self-start mt-10">
+                    <div class="glass p-8 rounded-[2.5rem] text-center">
+                        <div class="w-20 h-20 bg-blue-600 rounded-full mx-auto mb-4 flex items-center justify-center text-3xl">👤</div>
+                        <h2 class="text-2xl font-black">${user.username}</h2>
+                        <p class="text-sm text-gray-500">${user.email}</p>
+                    </div>
+                    <div class="glass p-4 rounded-2xl flex justify-between items-center">
+                        <span class="text-sm font-bold text-gray-400">كود الإحالة</span>
+                        <span class="font-black text-blue-500">${user.referral_code || 'RX-001'}</span>
+                    </div>
+                    <button onclick="location.reload()" class="w-full bg-red-600/20 text-red-500 p-4 rounded-2xl font-black text-sm">تسجيل الخروج</button>
+                </div>
+            `;
+        }
+
+        // --- منطق الدخول ---
+        async function handleLogin() {
+            const email = document.getElementById('email').value.trim();
+            const pass = document.getElementById('pass').value.trim();
+            const btn = document.getElementById('loginBtn');
+
+            if(!email || !pass) return alert("البيانات ناقصة!");
+
+            btn.innerText = "جاري التحقق...";
+            const { data, error } = await _supabase.from('profiles').select('*').eq('email', email).eq('password', pass).maybeSingle();
+
+            if(data) {
+                user = data;
+                showDashboard();
             } else {
-                alert('خطأ في البيانات!');
+                alert("بيانات الدخول خاطئة!");
+                btn.innerText = "دخول 🚀";
             }
         }
 
-        // ابدأ بصفحة الدخول
+        // تشغيل صفحة الدخول عند البدء
         showLogin();
     </script>
 </body>
