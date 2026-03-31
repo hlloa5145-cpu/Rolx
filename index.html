@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ROLEX | نظام الاستثمار المتكامل</title>
+    <title>ROLEX | استثمار ذكي</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
@@ -11,7 +11,8 @@
         body { font-family: 'Tajawal', sans-serif; background: #070b14; color: white; }
         .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05); }
         .gold-card { background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c); color: #1a1a1a; }
-        input { text-align: center; }
+        input { text-align: center; transition: 0.3s; }
+        input:focus { border-color: #3b82f6 ! aggressiveness; box-shadow: 0 0 10px rgba(59, 130, 246, 0.5); }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -39,6 +40,7 @@
     </nav>
 
     <script>
+        // بيانات الربط (تأكد أنها تابعة للمشروع الظاهر في صورتك 7498)
         const SUPABASE_URL = "https://rsmrgiyecaoicrqxgize.supabase.co";
         const SUPABASE_KEY = "EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbXJnaXllY2FvaWNycXhnaXplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4OTEzODgsImV4cCI6MjA5MDQ2NzM4OH0.9YafUeTgpnqWNsjokIwzHmM-nEkDH81271t2rdk_2UQ";
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -52,43 +54,67 @@
                 <div class="w-full max-w-md glass p-10 rounded-[2.5rem] shadow-2xl text-center">
                     <h1 class="text-5xl font-black text-blue-500 italic mb-10 tracking-tighter">ROLEX</h1>
                     <div class="space-y-4">
-                        <input type="email" id="email" placeholder="البريد الإلكتروني" class="w-full p-4 rounded-2xl bg-slate-900 border border-white/5 outline-none focus:border-blue-500 font-bold">
-                        <input type="password" id="pass" placeholder="كلمة المرور" class="w-full p-4 rounded-2xl bg-slate-900 border border-white/5 outline-none focus:border-blue-500 font-bold">
+                        <input type="email" id="email" placeholder="البريد الإلكتروني" class="w-full p-4 rounded-2xl bg-slate-900 border border-white/5 outline-none font-bold">
+                        <input type="password" id="pass" placeholder="كلمة المرور" class="w-full p-4 rounded-2xl bg-slate-900 border border-white/5 outline-none font-bold">
                         <button onclick="handleLogin()" id="mainBtn" class="w-full bg-blue-600 p-4 rounded-2xl font-black text-lg">دخول 🚀</button>
-                        <button onclick="showRegister()" class="text-gray-500 text-sm font-bold underline">ليس لديك حساب؟ سجل الآن</button>
+                        <button onclick="showRegister()" class="text-gray-500 text-sm font-bold underline">إنشاء حساب جديد</button>
                     </div>
                 </div>
             `;
         }
 
-        // --- 2. صفحة التسجيل (الجديدة) ---
+        // --- 2. صفحة التسجيل ---
         function showRegister() {
             document.getElementById('app').innerHTML = `
                 <div class="w-full max-w-md glass p-10 rounded-[2.5rem] shadow-2xl text-center">
-                    <h2 class="text-2xl font-black mb-6 text-white">إنشاء حساب جديد ✨</h2>
+                    <h2 class="text-2xl font-black mb-6">سجل الآن ✨</h2>
                     <div class="space-y-4">
-                        <input type="text" id="regUser" placeholder="اسم المستخدم" class="w-full p-4 rounded-2xl bg-slate-900 border border-white/5 outline-none focus:border-blue-500 font-bold">
-                        <input type="email" id="regEmail" placeholder="البريد الإلكتروني" class="w-full p-4 rounded-2xl bg-slate-900 border border-white/5 outline-none focus:border-blue-500 font-bold">
-                        <input type="password" id="regPass" placeholder="كلمة المرور" class="w-full p-4 rounded-2xl bg-slate-900 border border-white/5 outline-none focus:border-blue-500 font-bold">
-                        <button onclick="handleRegister()" id="regBtn" class="w-full bg-green-600 p-4 rounded-2xl font-black text-lg">تأكيد التسجيل ✅</button>
-                        <button onclick="showLogin()" class="text-gray-500 text-sm font-bold underline">لديك حساب؟ سجل دخولك</button>
+                        <input type="text" id="regUser" placeholder="اسم المستخدم" class="w-full p-4 rounded-2xl bg-slate-900 border border-white/5 outline-none font-bold">
+                        <input type="email" id="regEmail" placeholder="البريد الإلكتروني" class="w-full p-4 rounded-2xl bg-slate-900 border border-white/5 outline-none font-bold">
+                        <input type="password" id="regPass" placeholder="كلمة المرور" class="w-full p-4 rounded-2xl bg-slate-900 border border-white/5 outline-none font-bold">
+                        <button onclick="handleRegister()" id="regBtn" class="w-full bg-green-600 p-4 rounded-2xl font-black text-lg text-white">تأكيد الحساب ✅</button>
+                        <button onclick="showLogin()" class="text-gray-500 text-sm font-bold underline">لديك حساب؟ سجل دخول</button>
                     </div>
                 </div>
             `;
         }
 
-        // --- منطق التسجيل ---
+        // --- وظيفة تسجيل الدخول ---
+        async function handleLogin() {
+            const email = document.getElementById('email').value.trim();
+            const pass = document.getElementById('pass').value.trim();
+            const btn = document.getElementById('mainBtn');
+
+            btn.innerText = "جاري التحقق...";
+            
+            // البحث في جدول profiles بناءً على صورتك 7498
+            const { data, error } = await _supabase
+                .from('profiles')
+                .select('*')
+                .eq('email', email)
+                .eq('password', pass)
+                .maybeSingle();
+
+            if (data) {
+                user = data;
+                showDashboard();
+            } else {
+                alert("خطأ: تأكد من البيانات أو أن الحساب موجود في جدول profiles");
+                btn.innerText = "دخول 🚀";
+            }
+        }
+
+        // --- وظيفة إنشاء الحساب ---
         async function handleRegister() {
             const username = document.getElementById('regUser').value.trim();
             const email = document.getElementById('regEmail').value.trim();
             const password = document.getElementById('regPass').value.trim();
             const btn = document.getElementById('regBtn');
 
-            if (!username || !email || !password) return alert("يرجى ملء جميع الخانات!");
+            if (!username || !email || !password) return alert("املأ كل الخانات!");
 
             btn.innerText = "جاري الحفظ...";
-            btn.disabled = true;
-
+            
             const { data, error } = await _supabase
                 .from('profiles')
                 .insert([{ username, email, password, balance: 0 }])
@@ -96,48 +122,33 @@
                 .single();
 
             if (error) {
-                alert("خطأ: قد يكون الإيميل مستخدماً بالفعل!");
-                btn.innerText = "تأكيد التسجيل ✅";
-                btn.disabled = false;
+                alert("خطأ: الإيميل قد يكون مسجلاً مسبقاً!");
+                btn.innerText = "تأكيد الحساب ✅";
             } else {
-                alert("تم إنشاء حسابك بنجاح!");
                 user = data;
                 showDashboard();
             }
         }
 
-        // --- منطق الدخول ---
-        async function handleLogin() {
-            const email = document.getElementById('email').value.trim();
-            const pass = document.getElementById('pass').value.trim();
-            const btn = document.getElementById('mainBtn');
-
-            btn.innerText = "جاري التحقق...";
-            const { data, error } = await _supabase.from('profiles').select('*').eq('email', email).eq('password', pass).maybeSingle();
-
-            if (data) {
-                user = data;
-                showDashboard();
-            } else {
-                alert("خطأ في البيانات!");
-                btn.innerText = "دخول 🚀";
-            }
-        }
-
-        // باقي الصفحات (Dashboard, Deposit, إلخ كما في الكود السابق)
+        // --- الصفحة الرئيسية ---
         function showDashboard() {
             document.getElementById('bottomNav').classList.remove('hidden');
+            document.body.classList.remove('flex', 'items-center'); // تعديل التنسيق ليظهر من الأعلى
             document.getElementById('app').innerHTML = `
-                <div class="w-full max-w-md space-y-6 pb-24 self-start mt-10 text-center">
-                    <div class="gold-card p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden text-right">
-                        <p class="font-black opacity-70">إجمالي الرصيد</p>
-                        <h2 class="text-5xl font-black mt-2 tabular-nums">$${user.balance}</h2>
+                <div class="w-full max-w-md space-y-6 pb-24 mt-4">
+                    <div class="gold-card p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden">
+                        <p class="font-black opacity-70">رصيدك الحالي</p>
+                        <h2 class="text-5xl font-black mt-2 tabular-nums font-mono">$${user.balance}</h2>
+                        <div class="absolute -right-6 -bottom-6 opacity-10 text-8xl font-black italic">RX</div>
                     </div>
-                    <p class="font-bold text-blue-400">مرحباً بك ${user.username} في Rolex</p>
+                    <div class="glass p-6 rounded-3xl text-center border-blue-500/20 border">
+                         <p class="text-blue-400 font-bold tracking-widest uppercase text-xs">أهلاً بك، ${user.username}</p>
+                    </div>
                 </div>
             `;
         }
 
+        // باقي الصفحات (يمكنك نسخها من الأكواد السابقة لـ Deposit و Withdraw)
         showLogin();
     </script>
 </body>
